@@ -5,9 +5,12 @@ Um aplicativo nativo para macOS que encontra e deleta pastas vazias em um diret�
 ## Funcionalidades
 
 - ✅ Interface gráfica moderna e intuitiva usando SwiftUI
-- 🔍 Escaneamento recursivo de diretórios
-- 📋 Visualização de todas as pastas vazias encontradas
-- 🗑️ Opção de deletar pastas individualmente ou todas de uma vez
+- 🔍 Escaneamento recursivo inteligente de diretórios
+- 🌳 **Detecção de hierarquias completas** de pastas vazias (pasta pai + subpastas)
+- 📋 **Visualização hierárquica** com indentação mostrando estrutura de pastas
+- 🗑️ **Deleção automática em cascata** - ao deletar uma pasta, todas as subpastas vazias são removidas
+- 🔐 **Elevação automática de privilégios** - solicita senha do administrador quando necessário
+- 📊 Estatísticas de deleção com feedback de sucesso/erro
 - 🔒 Sandboxed para maior segurança
 - ⚡ Performance otimizada com operações assíncronas
 
@@ -54,10 +57,18 @@ Um aplicativo nativo para macOS que encontra e deleta pastas vazias em um diret�
 
 1. Clique no botão **"Selecionar Diretório"**
 2. Escolha a pasta que deseja escanear
-3. O aplicativo irá automaticamente escanear o diretório e listar todas as pastas vazias
-4. Você pode:
-   - Deletar pastas individualmente clicando no ícone de lixeira ao lado de cada pasta
-   - Deletar todas as pastas vazias de uma vez clicando em **"Deletar Todas"**
+3. O aplicativo irá automaticamente escanear o diretório e listar todas as hierarquias de pastas vazias
+4. A interface mostra:
+   - **Pastas principais** com fundo mais escuro
+   - **Subpastas vazias** indentadas abaixo da pasta pai
+   - **Contador de subpastas** para cada hierarquia
+   - **Caminho completo** ao passar o mouse sobre cada pasta
+5. Você pode:
+   - **Deletar individualmente**: Clique no ícone de lixeira ao lado de qualquer pasta (deleta a pasta e todas as subpastas vazias)
+   - **Deletar todas**: Clique em "Deletar Todas" para remover todas as hierarquias de uma vez
+6. **Tratamento de permissões**:
+   - Se o app encontrar problemas de permissão, **automaticamente solicitará sua senha de administrador**
+   - Você pode escolher fornecer a senha ou cancelar a operação
 
 ## Estrutura do Projeto
 
@@ -77,19 +88,25 @@ EmptyFolderCleaner/
 ### FolderScanner
 
 A classe `FolderScanner` é responsável por:
-- Escanear recursivamente todos os diretórios a partir do caminho selecionado
-- Identificar pastas que não contêm nenhum arquivo ou subpasta
-- Ordenar as pastas por profundidade (mais profundas primeiro) para evitar problemas ao deletar
-- Gerenciar a exclusão de pastas vazias
+- **Escanear recursivamente** todos os diretórios a partir do caminho selecionado
+- **Identificar hierarquias completas** de pastas vazias (pasta pai + todas as subpastas vazias)
+- **Construir árvore hierárquica** mostrando a relação entre pastas e subpastas
+- **Filtrar inteligentemente** para mostrar apenas pastas raiz (evita duplicação de subpastas)
+- **Verificação profunda** - uma pasta é considerada vazia se ela e todas as suas subpastas não contêm arquivos
+- **Gerenciar deleção em cascata** - ao deletar uma pasta, todas as subpastas vazias são removidas automaticamente
+- **Elevação automática de privilégios** usando AppleScript quando encontra problemas de permissão
 
 ### ContentView
 
 A interface do usuário oferece:
 - Botão de seleção de diretório usando `NSOpenPanel`
-- Lista scrollable de pastas vazias encontradas
+- **Visualização hierárquica** com indentação mostrando estrutura de pastas
+- **Contador de pastas** mostrando quantas subpastas cada hierarquia contém
+- **Ícones diferenciados** (pasta vazia vs pasta com subpastas)
 - Feedback visual durante o escaneamento
-- Confirmações antes de deletar pastas
-- Mensagens de sucesso quando nenhuma pasta vazia é encontrada
+- **Estatísticas em tempo real** de deleções bem-sucedidas e falhas
+- **Mensagens de erro** claras quando há problemas de permissão
+- Confirmações antes de deletar pastas com informação sobre quantas subpastas serão removidas
 
 ## Permissões
 
@@ -101,15 +118,33 @@ O aplicativo requer as seguintes permissões (definidas no arquivo `.entitlement
 
 ⚠️ **IMPORTANTE**:
 - A exclusão de pastas é **permanente** e não pode ser desfeita
-- Sempre verifique cuidadosamente a lista de pastas antes de deletá-las
-- Recomenda-se fazer backup de dados importantes antes de usar o aplicativo
+- **Deleção em cascata**: Ao deletar uma pasta pai, **todas as subpastas vazias** também serão removidas
+- Sempre verifique cuidadosamente a **hierarquia completa** antes de deletar
+- O contador mostra **quantas pastas no total** serão removidas
+- Recomenda-se fazer **backup de dados importantes** antes de usar o aplicativo
+- **Elevação de privilégios**: Forneça sua senha de administrador apenas quando necessário e confiável
+
+## Segurança
+
+🔐 **Tratamento de Permissões**:
+- O app tenta primeiro deletar sem privilégios elevados
+- Se encontrar problemas de permissão, **solicita senha de administrador** via diálogo seguro do macOS
+- A senha é tratada pelo sistema operacional, não pelo aplicativo
+- Você sempre pode **cancelar** a solicitação de senha
+
+🛡️ **Sandbox**:
+- O aplicativo roda em sandbox do macOS
+- Só pode acessar pastas que **você selecionou explicitamente**
+- Não tem acesso a outras áreas do sistema sem sua permissão
 
 ## Tecnologias Utilizadas
 
-- **SwiftUI**: Framework moderno para construção da interface
-- **Combine**: Gerenciamento reativo de estado
+- **SwiftUI**: Framework moderno para construção da interface com visualização hierárquica
+- **Combine**: Gerenciamento reativo de estado e atualizações em tempo real
 - **FileManager**: API do macOS para operações de sistema de arquivos
 - **NSOpenPanel**: Diálogo nativo de seleção de diretório
+- **NSAppleScript**: Elevação de privilégios segura quando necessário
+- **DispatchQueue**: Operações assíncronas para não bloquear a interface
 
 ## Licença
 
