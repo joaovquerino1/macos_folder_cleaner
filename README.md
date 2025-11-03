@@ -1,3 +1,2 @@
-# git_test
-### This is the beginning of a beatiful (and long) story.
-### Thanks to The Odin Project
+# maos_folder_cleaner
+### This is a simple app to delete empty folder on macoS
