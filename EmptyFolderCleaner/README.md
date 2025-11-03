@@ -18,11 +18,37 @@ Um aplicativo nativo para macOS que encontra e deleta pastas vazias em um diret�
 
 ## Como Usar
 
-### Compilar o Projeto
+### Opção 1: Gerar o arquivo .app (Recomendado para distribuição)
+
+#### Método 1: Archive (Para distribuição profissional)
+
+1. Abra o arquivo `EmptyFolderCleaner.xcodeproj` no Xcode
+2. No menu superior, vá em **Product** → **Archive**
+3. Aguarde a compilação terminar
+4. Na janela de Organizer que abrir:
+   - Clique em **Distribute App**
+   - Selecione **Copy App**
+   - Escolha o local para salvar
+5. O arquivo `EmptyFolderCleaner.app` estará no local escolhido
+
+#### Método 2: Build para uso local (Mais rápido)
+
+1. Abra o arquivo `EmptyFolderCleaner.xcodeproj` no Xcode
+2. No menu superior, vá em **Product** → **Build** (ou `Cmd + B`)
+3. Após a compilação, no navegador do projeto (lado esquerdo):
+   - Expanda a pasta **Products**
+   - Clique com botão direito em **EmptyFolderCleaner.app**
+   - Selecione **Show in Finder**
+4. O arquivo .app estará na pasta de build
+5. Copie o arquivo .app para sua pasta **Applications** ou onde preferir
+
+**Dica**: Para criar um .app otimizado para distribuição, use o Método 1 com a opção de Release.
+
+### Opção 2: Executar direto do Xcode (Para desenvolvimento)
 
 1. Abra o arquivo `EmptyFolderCleaner.xcodeproj` no Xcode
 2. Selecione o esquema "EmptyFolderCleaner" e seu Mac como destino
-3. Pressione `Cmd + B` para compilar ou `Cmd + R` para compilar e executar
+3. Pressione `Cmd + R` para compilar e executar
 
 ### Executar o Aplicativo
 
